@@ -6,8 +6,8 @@ A spell-checking skill that combines the [`typos`](https://github.com/crate-ci/t
 
 - 🔍 Fast spell checking using `typos` CLI
 - 🤖 LLM-assisted review to avoid false positives
-- 📝 JSON output for easy integration
-- 🛡️ Safe: reviews changes before applying
+- 📝 Structured output for easy review
+- 🛡️ Safe: review-first, apply explicitly
 
 ## Installation
 
@@ -24,7 +24,7 @@ A spell-checking skill that combines the [`typos`](https://github.com/crate-ci/t
 ## Usage
 
 ```bash
-./typos-skill.sh [path...]
+./typos-skill.sh [--diff|--apply] [path...]
 ```
 
 If no path is provided, checks the current directory.
@@ -37,9 +37,11 @@ If no path is provided, checks the current directory.
 
 📝 Found spelling errors. Preparing for LLM review...
 
-- **File**: `src/main.js` (line 42)
-  - **Error**: `receive`
-  - **Suggestions`: ["receive"]
+Found 1 spelling errors in 1 files.
+
+### `src/main.js`:42
+  **Error**: `recieve`
+  **Suggestions**: [receive]
 ```
 
 ## Workflow
@@ -47,4 +49,10 @@ If no path is provided, checks the current directory.
 1. Run `typos` with JSON output format
 2. Parse errors and display them
 3. LLM reviews context and confirms/rejects each correction
-4. Apply approved corrections
+4. Re-run with `--diff` or `--apply` after confirmation
+
+## Testing
+
+```bash
+./scripts/smoke-typos-skill.sh
+```
