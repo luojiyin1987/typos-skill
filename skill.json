@@ -1,0 +1,5 @@
+{
+  "name": "typos",
+  "description": "Find spelling errors using typos CLI and use LLM to confirm corrections",
+  "version": "0.1.0"
+}

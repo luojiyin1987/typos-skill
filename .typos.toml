@@ -1,0 +1,31 @@
+# Typos configuration file
+# https://github.com/crate-ci/typos
+
+[default]
+# Extend default ignore list
+extend-ignore-identifiers-re = [
+    # Add regex patterns for identifiers to ignore
+]
+
+[default.extend-identifiers]
+# Add specific identifier pairs to ignore
+# e.g., "ser" = "ser"
+
+[default.extend-words]
+# Add specific words to ignore
+# e.g., "notinlist" = "notinlist"
+
+[type.md]
+# Markdown specific settings
+extend-ignore-identifiers-re = [
+    # Allow code blocks to have more flexibility
+]
+
+[type.py]
+# Python specific settings
+
+[type.js]
+# JavaScript specific settings
+
+[type.ts]
+# TypeScript specific settings
