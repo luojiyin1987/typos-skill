@@ -220,6 +220,11 @@ def build_plan(changes):
                 if offset < 0:
                     errors.append(f"{path}: byte_offset must be >= 0 for '{item['typo']}'")
                     continue
+                # typos outputs byte_offset relative to the line start when line_num is present
+                if item["line_num"] is not None:
+                    starts = line_starts(data)
+                    if item["line_num"] <= len(starts):
+                        offset = starts[item["line_num"] - 1] + offset
                 if data[offset:offset + len(typo_bytes)] != typo_bytes:
                     errors.append(f"{path}: byte_offset mismatch for '{item['typo']}'")
                     continue
