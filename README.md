@@ -242,6 +242,11 @@ Built-in conservative rules:
   source line suggests a safer semantic rename.
 - Hits in snapshots, fixtures, and mocks default to manual review and prefer
   `.typos.toml` exclusion advice when they repeat.
+- Language-aware keyword detection: based on file extension, tokens matching
+  keywords, built-in functions, and common idioms of the detected programming
+  language (Go, Python, JavaScript/TypeScript, Rust, Shell, C/C++, Java, Ruby,
+  PHP, Swift, Kotlin, Scala, C#, Lua, R, SQL, and more) are automatically
+  classified as `FALSE POSITIVE`.
 
 ## ⚙️ Configuration
 
