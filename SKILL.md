@@ -18,18 +18,25 @@ to improvise basic false-positive rules.
 2. Read file context at the reported path and line; use the exported
    `bucket`, `suggested_status`, `preferred_action`, and `reason` as the
    default review stance.
-3. Update each JSON line:
+3. For items in the `candidate.source_fix` bucket, the built-in dictionary could
+   not classify the token. Infer the programming language from the file
+   extension and use your knowledge of that language's keywords, built-in
+   functions, standard library names, and common idioms to decide:
+   - If the token is a valid language term → mark as `FALSE POSITIVE`,
+     update `reason` to explain why it is a valid term in that language.
+   - If the token looks like a genuine typo → keep `ACCEPT CORRECT`.
+4. Update each JSON line:
    - `status`: `ACCEPT CORRECT`, `FALSE POSITIVE`, or `CUSTOM`
    - `correction`: required when status is `CUSTOM`
    - `reason`: keep or refine the explanation for why the item should or
      should not be changed
    - `rename_candidate`: when present, prefer a manual symbol rename over a
      spelling replacement
-4. Prefer `.typos.toml` suggestions for repeated false positives before
+5. Prefer `.typos.toml` suggestions for repeated false positives before
    editing source one by one.
-5. Apply approved changes with `<skill-dir>/typos-skill.sh --apply-review
+6. Apply approved changes with `<skill-dir>/typos-skill.sh --apply-review
    review.jsonl`.
-6. Optional: use `--diff` to preview or `--apply-all` to skip review.
+7. Optional: use `--diff` to preview or `--apply-all` to skip review.
 
 ## Review File Rules
 
@@ -48,6 +55,12 @@ to improvise basic false-positive rules.
     `ot -> optionTexts`
   - `toml_section` / `toml_snippet`: suggested `.typos.toml` update when safer
     than editing source
+  - `language` / `language_keyword`: when `bucket` is
+    `false_positive.language_keyword`, the token was identified as a known
+    keyword, built-in function, or idiom of the detected programming language
+    and is auto-skipped. For items not caught by the built-in dictionary
+    (`candidate.source_fix`), the reviewer should apply language knowledge to
+    determine if they are valid language terms.
 - Do not edit locator fields unless you know what you are doing:
   - keep `byte_offset` unchanged
   - keep `occurrence_index` unchanged
