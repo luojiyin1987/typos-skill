@@ -80,10 +80,24 @@ cat > "$TMP_DIR/docs/mockup-guide.md" <<'EOF'
 respones
 EOF
 
+cat > "$TMP_DIR/sample.go" <<'EOF'
+package main
+
+import "fmt"
+
+func init() {
+	err := fmt.Errorf("impl goroutine")
+	_ = err
+}
+EOF
+
 cat > "$TMP_DIR/negative.jsonl" <<EOF
 {"type":"typo","path":"$TMP_DIR/negative.js","line_num":1,"byte_offset":4,"typo":"ot","corrections":["to"]}
 {"type":"typo","path":"$TMP_DIR/negative.js","line_num":2,"byte_offset":4,"typo":"ot","corrections":["to"]}
 {"type":"typo","path":"$TMP_DIR/docs/mockup-guide.md","line_num":1,"byte_offset":0,"typo":"respones","corrections":["response"]}
+{"type":"typo","path":"$TMP_DIR/sample.go","line_num":5,"byte_offset":1,"typo":"err","corrections":["error"]}
+{"type":"typo","path":"$TMP_DIR/sample.go","line_num":5,"byte_offset":14,"typo":"impl","corrections":["imple"]}
+{"type":"typo","path":"$TMP_DIR/sample.go","line_num":5,"byte_offset":19,"typo":"goroutine","corrections":["go routine"]}
 EOF
 
 python3 "$ROOT_DIR/scripts/export-review.py" "$TMP_DIR/negative.jsonl" "$TMP_DIR/negative-review.jsonl" >/dev/null
@@ -102,6 +116,13 @@ doc_item = next(item for item in items if item["path"].endswith("mockup-guide.md
 assert by_line[1]["preferred_action"] != "RENAME_SYMBOL", "comparison should not become rename advice"
 assert by_line[2]["bucket"] != "false_positive.css_class", "object property should not become CSS class"
 assert doc_item["bucket"] != "manual_review.test_artifact", "mockup docs should not be treated as test artifacts"
+
+go_items = [item for item in items if item["path"].endswith("sample.go")]
+assert len(go_items) == 3, f"expected 3 Go items, got {len(go_items)}"
+for go_item in go_items:
+    assert go_item["bucket"] == "false_positive.language_keyword", (
+        f"Go keyword `{go_item['typo']}` should be language_keyword, got {go_item['bucket']}"
+    )
 PY
 
 "$SKILL" "$ROOT_DIR" >/dev/null
